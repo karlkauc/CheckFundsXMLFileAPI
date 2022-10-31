@@ -16,7 +16,7 @@
  *
  */
 
-package org.fundsxml;
+package org.fundsxml.controller;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -26,6 +26,8 @@ import io.micronaut.http.annotation.Post;
 import io.micronaut.http.multipart.CompletedFileUpload;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.fundsxml.checks.CheckResults;
+import org.fundsxml.checks.PerformChecks;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -41,6 +43,7 @@ public class CheckFundsXMLController {
     @Post(uri = "/", consumes = MediaType.MULTIPART_FORM_DATA, produces = MediaType.TEXT_PLAIN)
     HttpResponse<String> upload(CompletedFileUpload file){
 
+        logger.debug("Check File: {}", file.getFilename());
         PerformChecks performChecks = new PerformChecks();
         List<CheckResults> result = new ArrayList<>();
         try {
@@ -63,7 +66,7 @@ public class CheckFundsXMLController {
 
             return HttpResponse.ok(performChecks.formatErrors(result));
         } catch (Exception e) {
-            System.out.println(e.getLocalizedMessage());
+            logger.error(e.getMessage());
         }
 
         return HttpResponse.ok(performChecks.formatErrors(result));

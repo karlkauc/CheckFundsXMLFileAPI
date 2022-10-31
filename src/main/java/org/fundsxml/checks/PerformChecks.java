@@ -16,7 +16,7 @@
  *
  */
 
-package org.fundsxml;
+package org.fundsxml.checks;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -98,7 +98,7 @@ public class PerformChecks {
         final List<SAXParseException> exceptions = new LinkedList<>();
         try {
             SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            Schema schema = factory.newSchema(new StreamSource(new File("FundsXML4.xsd")));
+            Schema schema = factory.newSchema(new StreamSource(getClass().getClassLoader().getResourceAsStream("FundsXML4.xsd")));
             Validator validator = schema.newValidator();
 
             validator.setErrorHandler(new ErrorHandler() {
@@ -148,7 +148,7 @@ public class PerformChecks {
         checkResults.checkNumber = 2;
         checkResults.setCheckName("Fund has FundName");
 
-        if (!fundName.trim().isEmpty()) {
+        if (fundName != null && !fundName.trim().isEmpty()) {
             checkResults.setErrorDetails("OK");
             checkResults.setResultStatus(CheckResults.RESULTS.OK);
         } else {

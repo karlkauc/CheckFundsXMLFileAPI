@@ -16,7 +16,7 @@
  *
  */
 
-package org.fundsxml;
+package org.fundsxml.checks;
 
 public class CheckResults {
 
@@ -77,7 +77,7 @@ public class CheckResults {
                 '}';
     }
 
-    enum RESULTS {
+    public enum RESULTS {
         OK,
         WARNING,
         ERROR

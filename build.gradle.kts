@@ -22,6 +22,10 @@ dependencies {
     runtimeOnly("org.apache.logging.log4j:log4j-api:2.19.0")
     runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:2.19.0")
     implementation("io.micronaut:micronaut-validation")
+
+    implementation("net.sf.saxon:Saxon-HE:11.4") {
+        exclude(group = "xml-apis", module = "xml-apis")
+    }
 }
 
 

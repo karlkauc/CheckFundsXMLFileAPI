@@ -16,16 +16,21 @@
  *
  */
 
-package org.fundsxml;
+package org.fundsxml.controller;
 
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
 
+/**
+ * This is a dummy controller.
+ * For production use rename the "delete" method to "save" and implement logic for saving the FundsXML File.
+ */
 @Controller("/delete")
 public class DummyController {
-    @Get(uri = "/", produces = "text/plain")
-    public String index() {
-        return "Example Response";
+    @Post(uri = "/", consumes = MediaType.MULTIPART_FORM_DATA, produces = MediaType.TEXT_PLAIN)
+    public HttpResponse<String> index() {
+        return HttpResponse.ok("File deleted!");
     }
-
 }
