@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2022 Karl Kauc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ *
+ */
+
 package org.fundsxml;
 
 import org.apache.logging.log4j.LogManager;
@@ -31,6 +49,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -60,22 +79,22 @@ public class PerformChecks {
         }
     }
 
-    public String performAllChecks() {
+    public List<CheckResults> performAllChecks() {
         assert this.xmlFile != null;
 
-        var errorList = checkSchemaValidity();
-        StringBuilder schemaValidationErrors = new StringBuilder();
-        for (SAXParseException saxParseException : errorList) {
-            schemaValidationErrors.append(saxParseException.getLocalizedMessage()).append(System.lineSeparator());
-        }
+        List<CheckResults> checkResults = new ArrayList<>();
+        checkResults.add(checkSchemaValidity());
+        checkResults.add(hasFundName());
+        checkResults.add(checkPortfolioSums());
 
-        String fundName = hasFundName();
-
-
-        return schemaValidationErrors + fundName + System.lineSeparator();
+        return checkResults;
     }
 
-    public List<SAXParseException> checkSchemaValidity() {
+    private CheckResults checkSchemaValidity() {
+        CheckResults schemaError = new CheckResults();
+        schemaError.setCheckNumber(1);
+        schemaError.setCheckName("Schema Valid");
+
         final List<SAXParseException> exceptions = new LinkedList<>();
         try {
             SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -102,25 +121,56 @@ public class PerformChecks {
             StreamSource xmlFile = new StreamSource(this.xmlFile);
             validator.validate(xmlFile);
 
-            return exceptions;
+            if (exceptions.size() > 0) {
+                StringBuilder schemaValidationErrors = new StringBuilder();
+                for (SAXParseException saxParseException : exceptions) {
+                    schemaValidationErrors.append(saxParseException.getLocalizedMessage()).append(System.lineSeparator());
+                }
+                schemaError.setErrorMessage(schemaValidationErrors.toString());
 
+                schemaError.setResultStatus(CheckResults.RESULTS.ERROR);
+            } else {
+                schemaError.setResultStatus(CheckResults.RESULTS.OK);
+            }
+
+            return schemaError;
         } catch (SAXException | IOException e) {
             logger.error(e.getMessage());
-            return exceptions;
+            return schemaError;
         }
     }
 
-    public String hasFundName() {
+    private CheckResults hasFundName() {
         var fundName = getXmlFromXpath("/FundsXML4/Funds/Fund/Names/OfficialName/text()");
         logger.debug("Fund Name: {}", fundName);
 
+        CheckResults checkResults = new CheckResults();
+        checkResults.checkNumber = 2;
+        checkResults.setCheckName("Fund has FundName");
+
         if (!fundName.trim().isEmpty()) {
-            return "OK - has Fund Name: " + fundName;
+            checkResults.setErrorDetails("OK");
+            checkResults.setResultStatus(CheckResults.RESULTS.OK);
+        } else {
+            checkResults.setErrorDetails("NO FUND NAME FOUND!");
+            checkResults.setResultStatus(CheckResults.RESULTS.ERROR);
         }
-        return "ERROR - no Fund Name";
+
+        return checkResults;
     }
 
-    public String getXmlFromXpath(String xPath) {
+    private CheckResults checkPortfolioSums() {
+        CheckResults error = new CheckResults();
+        error.setCheckNumber(3);
+        error.setCheckName("Sum of Portfolio match Fund Volume");
+        // TODO: xPath insert here!
+
+
+        return error;
+    }
+
+
+    private String getXmlFromXpath(String xPath) {
         try {
             XPath xPathPath = XPathFactory.newInstance().newXPath();
             var nodeList = (NodeList) xPathPath.compile(xPath).evaluate(xmlDocument, XPathConstants.NODESET);
@@ -138,5 +188,15 @@ public class PerformChecks {
         }
         return null;
     }
+
+    public String formatErrors(List<CheckResults> list) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (CheckResults checkResults : list) {
+            stringBuilder.append(checkResults.toString()).append(System.lineSeparator());
+        }
+
+        return stringBuilder.toString();
+    }
+
 
 }

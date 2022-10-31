@@ -1,28 +1,34 @@
-## Micronaut 3.7.2 Documentation
+# Check FundsXML Files - API
 
-- [User Guide](https://docs.micronaut.io/3.7.2/guide/index.html)
-- [API Reference](https://docs.micronaut.io/3.7.2/api/index.html)
-- [Configuration Reference](https://docs.micronaut.io/3.7.2/guide/configurationreference.html)
-- [Micronaut Guides](https://guides.micronaut.io/index.html)
----
+This project was built for demo purpose of an FundsXML API.
 
-- [Shadow Gradle Plugin](https://plugins.gradle.org/plugin/com.github.johnrengelman.shadow)
-## Feature openapi documentation
+## Requirements
 
-- [Micronaut OpenAPI Support documentation](https://micronaut-projects.github.io/micronaut-openapi/latest/guide/index.html)
+To run this application you need to have Java 17 or higher installed.
+Download the latest release and start the application:
 
-- [https://www.openapis.org](https://www.openapis.org)
+    `java -jar CheckFundsXML-0.1-all.jar`
 
+Alternative clone the project and run the application:
 
-## Feature http-client documentation
+`git clone https://github.com/karlkauc/CheckFundsXMLFileAPI.git`
 
-- [Micronaut HTTP Client documentation](https://docs.micronaut.io/latest/guide/index.html#httpClient)
+` ./gradlew[.bat|.sh] run`
 
+## Performing checks in the browser
 
-## Feature swagger-ui documentation
+After running the application open a browser: http://localhost:8080/swagger-ui/
 
-- [Micronaut Swagger UI documentation](https://micronaut-projects.github.io/micronaut-openapi/latest/guide/index.html)
+![](img.png)
 
-- [https://swagger.io/tools/swagger-ui/](https://swagger.io/tools/swagger-ui/)
+## Performing checks on the command line
+
+`
+curl -X 'POST'
+'http://localhost:8080/check'
+-H 'accept: text/plain'
+-H 'Content-Type: multipart/form-data'
+-F 'file=@FILENAME.xml;type=text/xml'
+`
 
 
