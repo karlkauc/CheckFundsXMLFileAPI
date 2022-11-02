@@ -9,8 +9,6 @@
     <xsl:output method="html" version="5.0" encoding="UTF-8" indent="yes" omit-xml-declaration="yes"/>
     <xsl:preserve-space elements="*"/>
 
-    <xsl:variable name="renderXMLContent" select="true()"/>
-
     <xsl:template match="/">
         <html lang="en">
             <head>
@@ -25,13 +23,7 @@
                 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
                 <meta name="theme-color" content="#bce4fa"/>
                 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-
-                <xsl:if test="$renderXMLContent">
-                    <link href="prism.css" rel="stylesheet"/>
-                </xsl:if>
-
-                <link href="lib/main.min.css" rel="stylesheet"/>
-                <link rel="stylesheet" href="scss/eam_style.css"/>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
             </head>
             <body class="container-fluid">
                 <h1>Analyzing File</h1>
@@ -68,15 +60,6 @@
                         </td>
                     </tr>
                 </table>
-                <hr/>
-                <div id="list_errors">
-                    <h1>ERROR LIST</h1>
-                </div>
-                <hr/>
-
-                <div id="list_warnings">
-                    <h1>WARNING LIST</h1>
-                </div>
                 <hr/>
 
                 <xsl:apply-templates select="FundsXML4/ControlData"/>
@@ -124,13 +107,9 @@
                     </pre>
                 </p>
 
-                <xsl:if test="$renderXMLContent">
-                    <script src="prism.js"/>
-                </xsl:if>
-
-                <script src="replaceNodes.js"/>
-                <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.js"/>
-                <script src="node_modules/bootstrap/js/dist/collapse.js"/>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+                        integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+                        crossorigin="anonymous"/>
             </body>
         </html>
     </xsl:template>
@@ -817,20 +796,6 @@
                                                     <xsl:apply-templates select="CommercialPaper"/>
 
                                                 </div>
-                                                <div class="row">
-                                                    <div class="fs-small">
-                                                        <details>
-                                                            <summary>Orginal XML</summary>
-                                                            <p>
-                                                                <script type="text/plain" class="language-xml">
-                                                                    <xsl:if test="$renderXMLContent">
-                                                                        <xsl:copy-of select="node()"/>
-                                                                    </xsl:if>
-                                                                </script>
-                                                            </p>
-                                                        </details>
-                                                    </div>
-                                                </div>
                                             </div>
                                         </td>
                                     </tr>
@@ -851,12 +816,6 @@
 
         <span class="fw-bold">Equity</span>
         <table class="table">
-
-            <!--<xsl:attribute name="class">
-                <xsl:value-of
-                        select="if (not(Units) or not(Price/Amount[@ccy=$positionCCY])) then 'table bg-danger' else 'table bg-success' "/>
-            </xsl:attribute>
-            -->
             <tr>
                 <th>Units</th>
                 <td class="text-end">
@@ -1420,24 +1379,6 @@
                                 <br/>
                                 <xsl:apply-templates select="AssetDetails/*"/>
 
-                                <div class="container" style="padding-left:0">
-                                    <div class="row">
-                                        <div class="fs-small">
-                                            <div class="row align-items-end">
-                                                <div class="col">
-                                                    <details>
-                                                        <summary>Orginal XML</summary>
-                                                        <p>
-                                                            <script type="text/plain" class="language-xml">
-                                                                <xsl:copy-of select="node()"/>
-                                                            </script>
-                                                        </p>
-                                                    </details>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </td>
                         </tr>
                     </xsl:for-each>
