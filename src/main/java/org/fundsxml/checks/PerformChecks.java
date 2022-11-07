@@ -84,8 +84,9 @@ public class PerformChecks {
 
         List<CheckResults> checkResults = new ArrayList<>();
         checkResults.add(checkSchemaValidity());
+        checkResults.add(fundLanguageGerman());
         checkResults.add(hasFundName());
-        checkResults.add(checkPortfolioSums());
+        // checkResults.add(checkPortfolioSums());
 
         return checkResults;
     }
@@ -145,7 +146,7 @@ public class PerformChecks {
         logger.debug("Fund Name: {}", fundName);
 
         CheckResults checkResults = new CheckResults();
-        checkResults.checkNumber = 2;
+        checkResults.checkNumber = 3;
         checkResults.setCheckName("Fund has FundName");
 
         if (fundName != null && !fundName.trim().isEmpty()) {
@@ -159,9 +160,29 @@ public class PerformChecks {
         return checkResults;
     }
 
+    private CheckResults fundLanguageGerman() {
+        var fundLang = getXmlFromXpath("/FundsXML4/ControlData/Language/text()");
+        logger.debug("Fund Name: {}", fundLang);
+
+        CheckResults checkResults = new CheckResults();
+        checkResults.checkNumber = 2;
+        checkResults.setCheckName("Check Fund language.");
+
+        if (fundLang != null && fundLang.trim().equalsIgnoreCase("DE")) {
+            checkResults.setErrorDetails("OK");
+            checkResults.setResultStatus(CheckResults.RESULTS.OK);
+            checkResults.setErrorDetails("Fund Language: '" + fundLang + "'");
+        } else {
+            checkResults.setErrorDetails("Fund Language not DE: [" + fundLang + "]");
+            checkResults.setResultStatus(CheckResults.RESULTS.ERROR);
+        }
+
+        return checkResults;
+    }
+
     private CheckResults checkPortfolioSums() {
         CheckResults error = new CheckResults();
-        error.setCheckNumber(3);
+        error.setCheckNumber(4);
         error.setCheckName("Sum of Portfolio match Fund Volume");
         // TODO: xPath insert here!
 
